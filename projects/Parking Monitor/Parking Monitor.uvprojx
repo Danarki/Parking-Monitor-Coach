@@ -398,6 +398,11 @@
               <FileType>1</FileType>
               <FilePath>.\src\main.c</FilePath>
             </File>
+            <File>
+              <FileName>led_functions.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\led_functions.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -1,0 +1,8 @@
+# Ignore obj folder
+obj
+
+# Ignore uvoptx files
+*.uvoptx
+
+# Ignore uvguix files
+.uvguix
