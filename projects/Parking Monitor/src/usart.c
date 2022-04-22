@@ -97,7 +97,19 @@ char USART_getc(void)
 
 void USART_getstr(char *str)
 {
-  // Implement this function yourself
+  while(1)
+  {
+		char c = USART_getc();
+		
+		//When enter is pressed (carrige return)
+    if(c == '\r')
+    {
+			break;
+    }
+		
+		*str = c;
+		str++;
+	}
 }
 
 // Implements the following VT100 terminal commands
