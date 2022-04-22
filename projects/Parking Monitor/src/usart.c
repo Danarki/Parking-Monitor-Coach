@@ -32,7 +32,9 @@ void USART_init(void)
   // USARTDIV = 48 MHz / 115200 = 416 = 0x01A0
   // BRR[15:4] = USARTDIV[15:4]
   // When OVER8 = 0, BRR [3:0] = USARTDIV [3:0]
-  USART1->BRR = 0x01A0;
+  //USART1->BRR = 0x01A0;
+	
+	USART1->BRR = 0x1388; //9600 Baudrate
 
   // USART enable
   // Receiver enable

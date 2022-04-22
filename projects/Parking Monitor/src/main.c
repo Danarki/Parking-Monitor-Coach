@@ -6,8 +6,10 @@
 #include "usart.h"
 #include "stdbool.h"
 #include "led_functions.h"
+#include "string.h"
 
 #define LENGTH_AT_COMMAND 20
+#define SECONDE SystemCoreClock/8
 // ----------------------------------------------------------------------------
 // Global variables
 // ----------------------------------------------------------------------------
@@ -22,21 +24,22 @@ void delay(const int d);
 // Main
 // ----------------------------------------------------------------------------
 int main(){
-	char AT_buffer[LENGTH_AT_COMMAND];
-	
 	// Setup USART1 (PA9 & PA10)
   USART_init();
 	
 	//Print introduction
-  USART_clearscreen();
   USART_putstr("USART initialized\n");
-	USART_putstr("Waiting for AT command...\n");
+	USART_putstr("Waiting for message...\n");
 
 	while(true){
+		char AT_buffer[LENGTH_AT_COMMAND];
+		
 		USART_getstr(AT_buffer);
-		USART_putstr("Command send to Bluetooth module: \"");
+		USART_putstr("Message send from Bluetooth module: \"");
 		USART_putstr(AT_buffer);
 		USART_putstr("\"\n");
+		
+		memset(AT_buffer, 0, 255);
 	}
 }
 
