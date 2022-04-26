@@ -167,7 +167,7 @@ char bluetooth_getc(void)
   }
 
   // Wait for data in the Receive Data Register
-  //while((USART2->ISR & USART_ISR_RXNE) == 0) ;
+  while((USART2->ISR & USART_ISR_RXNE) == 0);
 
   // Read data from RDR, clears the RXNE flag
   c = (char)USART2->RDR;

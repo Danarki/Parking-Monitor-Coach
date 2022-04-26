@@ -8,8 +8,6 @@
 #include "led_functions.h"
 #include "string.h"
 
-#define LENGTH_AT_COMMAND 20
-#define SECONDE SystemCoreClock/8
 // ----------------------------------------------------------------------------
 // Global variables
 // ----------------------------------------------------------------------------
@@ -24,41 +22,43 @@ void delay(const int d);
 // Main
 // ----------------------------------------------------------------------------
 int main(){
-	// Setup USART1 (PA9 & PA10) and USART2 (PA14 & PA15)
+	// Setup USART1 (PA9 & PA10) and USART2 (PA2 & PA3)
   USART_init();
+	
+	STM_EVAL_LEDInit(LED3);
 	
 	//Print introduction
   terminal_clearscreen();
   terminal_putstr("USART initialized\n");
-	terminal_putstr("Waiting for AT command...\n");
-
-	while(true){
-		char AT_buffer[LENGTH_AT_COMMAND];
-		//char BT_response[LENGTH_AT_COMMAND];
+	terminal_putstr("Waiting for input...\n");
 		
-		terminal_getstr(AT_buffer);
-		
-		bluetooth_putstr(AT_buffer);
-		
-		terminal_putstr("Command send to Bluetooth module: \"");
-		terminal_putstr(AT_buffer);
-		terminal_putstr("\"\n");
-		
-		while(1)
+	while(true)
+	{
+		if(bluetooth_available())
 		{
-			if(bluetooth_available())
+			char c = bluetooth_getc();
+			
+			terminal_putstr("Input received: \'");
+			terminal_putc(c);
+			terminal_putstr("\'\n");
+			
+			if(c == 'j')
 			{
-				//bluetooth_getstr(BT_response);
-				
-				//terminal_putstr(BT_response);
-				
-				terminal_putc(bluetooth_getc());
-				//terminal_putstr("\n");
+				terminal_putstr("Turning LED on...");
+				STM_EVAL_LEDOn(LED3);
 			}
+			else if(c == 'n')
+			{
+				terminal_putstr("Turning LED off...");
+				STM_EVAL_LEDOff(LED3);
+			}
+			else
+			{
+				terminal_putstr("Unknown input!");
+			}
+			terminal_putstr("\n");
+			
 		}
-		
-		//memset(AT_buffer, 0, 20);
-		//memset(BT_response, 0, 20);
 	}
 }
 
