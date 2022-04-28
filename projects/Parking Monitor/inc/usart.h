@@ -16,6 +16,7 @@ void terminal_putc(char c);
 char terminal_getc(void);
 void terminal_putstr(char *str);
 void terminal_getstr(char *str);
+bool terminal_available(void);
 void terminal_clearscreen(void);
 
 void bluetooth_putc(char c);

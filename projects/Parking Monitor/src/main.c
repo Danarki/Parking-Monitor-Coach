@@ -24,42 +24,36 @@ void delay(const int d);
 // Main
 // ----------------------------------------------------------------------------
 int main(){
-	// Setup USART1 (PA9 & PA10) and USART2 (PA14 & PA15)
+	char AT_buffer[LENGTH_AT_COMMAND];
+	
+	// Setup USART1 (PA9 & PA10) and USART2 (PA2 & PA3)
   USART_init();
 	
 	//Print introduction
   terminal_clearscreen();
   terminal_putstr("USART initialized\n");
-	terminal_putstr("Waiting for AT command...\n");
+	terminal_putstr("Waiting for AT command...");
 
-	while(true){
-		char AT_buffer[LENGTH_AT_COMMAND];
-		//char BT_response[LENGTH_AT_COMMAND];
-		
-		terminal_getstr(AT_buffer);
-		
-		bluetooth_putstr(AT_buffer);
-		
-		terminal_putstr("Command send to Bluetooth module: \"");
-		terminal_putstr(AT_buffer);
-		terminal_putstr("\"\n");
-		
-		while(1)
+	while(1)
+	{
+		if(bluetooth_available())
 		{
-			if(bluetooth_available())
-			{
-				//bluetooth_getstr(BT_response);
-				
-				//terminal_putstr(BT_response);
-				
-				terminal_putc(bluetooth_getc());
-				//terminal_putstr("\n");
-			}
+			terminal_putc(bluetooth_getc());
 		}
-		
-		//memset(AT_buffer, 0, 20);
-		//memset(BT_response, 0, 20);
+		else if(terminal_available())
+		{
+			terminal_getstr(AT_buffer);
+	
+			bluetooth_putstr(AT_buffer);
+	
+			terminal_putstr("\nCommand send to Bluetooth module: \"");
+			terminal_putstr(AT_buffer);
+			terminal_putstr("\"\n");
+			
+			memset(AT_buffer,0,20);
+		}
 	}
+	
 }
 
 #pragma push
