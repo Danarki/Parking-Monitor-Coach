@@ -4,11 +4,9 @@
 #include "stm32f0xx.h"
 #include "stm32f0_discovery.h"
 #include "usart.h"
-#include "stdbool.h"
+#include "bluetooth.h"
 #include "led_functions.h"
-#include "string.h"
 
-#define LENGTH_AT_COMMAND 20
 #define SECONDE SystemCoreClock/8
 // ----------------------------------------------------------------------------
 // Global variables
@@ -24,36 +22,24 @@ void delay(const int d);
 // Main
 // ----------------------------------------------------------------------------
 int main(){
-	char AT_buffer[LENGTH_AT_COMMAND];
+	//Data to broadcast
+	char data[MAX_LENGTH_BROADCAST_DATA] = "Test123";
 	
-	// Setup USART1 (PA9 & PA10) and USART2 (PA2 & PA3)
-  USART_init();
+	// Setup USART1 for terminal (PA9 & PA10)
+  terminal_init();
+	terminal_clearscreen();
+  terminal_putstr("Terminal initialized\n");
 	
-	//Print introduction
-  terminal_clearscreen();
-  terminal_putstr("USART initialized\n");
-	terminal_putstr("Waiting for AT command...");
-
-	while(1)
-	{
-		if(bluetooth_available())
-		{
-			terminal_putc(bluetooth_getc());
-		}
-		else if(terminal_available())
-		{
-			terminal_getstr(AT_buffer);
+	//Setup USART2 for bluetooth (PA2 & PA3)
+	bluetooth_init();
+	terminal_putstr("Bluetooth initialized\n");
 	
-			bluetooth_putstr(AT_buffer);
+	//Broadcast the data
+	terminal_putstr("Broadcasting data: \"");
+	terminal_putstr(data);
+	terminal_putstr("\"\n");
 	
-			terminal_putstr("\nCommand send to Bluetooth module: \"");
-			terminal_putstr(AT_buffer);
-			terminal_putstr("\"\n");
-			
-			memset(AT_buffer,0,20);
-		}
-	}
-	
+	bluetooth_broadcast(data);
 }
 
 #pragma push

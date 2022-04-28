@@ -401,6 +401,11 @@
               <FileType>1</FileType>
               <FilePath>.\src\led_functions.c</FilePath>
             </File>
+            <File>
+              <FileName>bluetooth.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\bluetooth.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
