@@ -47,7 +47,25 @@
 /*  available peripheral interrupt handler's name please refer to the startup */
 /*  file (startup_stm32f0xx.s).                                               */
 /******************************************************************************/
-
+/**
+  * @brief  This function handles ADC1 and COMP global interrupt request.
+  * @param  None
+  * @retval None
+  */
+void ADC1_COMP_IRQHandler(void)
+{
+  if(ADC_GetITStatus(ADC1, ADC_IT_AWD) != RESET)
+  {
+    ADC_ClearITPendingBit(ADC1, ADC_IT_AWD);
+    
+    // Turn on Window Watchdog indicator
+    STM_EVAL_LEDOn(LED4);
+  }
+	else {
+		STM_EVAL_LEDOff(LED4);
+	}
+	
+}
 
 /**
   * @}
