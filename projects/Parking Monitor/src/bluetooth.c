@@ -48,10 +48,42 @@ void bluetooth_init()
   USART2->CR3 = 0; 
 }
 
-void bluetooth_broadcast(char *data)
+void bluetooth_broadcast()
 {
+	//These bytes of data are going to be broadcast
+	uint8_t byte_one;
+	uint8_t byte_two;
+	uint8_t byte_three;
+	uint8_t byte_four;
+	
+	//Building the first byte
+	byte_one = BYTE_ID_1;
+	byte_one |= TIME_TO_LIVE;
+	byte_one |= GATEWAY_ID;
+	
+	//Building the second byte
+	byte_two = BYTE_ID_2;
+	byte_two |= VAK_ID_D1;
+	
+	//Building the third byte
+	byte_three = BYTE_ID_3;
+	byte_three |= VAK_ID_D2;
+	byte_three |= RICHTING;
+	byte_three |= SENSOR_DATA;
+	
+	//Building the fourth byte
+	byte_four = BYTE_ID_4;
+	
+	//Start broadcasting the bytes
 	bluetooth_putstr(AT_AVDA);
-	bluetooth_putstr(data);
+	
+	bluetooth_putc(byte_one);
+	bluetooth_putc(byte_two);
+	bluetooth_putc(byte_three);
+	bluetooth_putc(byte_four);
+	
+	//End broadcast
+	bluetooth_putc(EOT);
 }
 
 void bluetooth_putc(char c)
