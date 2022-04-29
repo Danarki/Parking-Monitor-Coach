@@ -8,6 +8,16 @@
 #include "led_functions.h"
 
 #define SECONDE SystemCoreClock/8
+
+//These bytes of data are going to be broadcast
+#define BYTE_1 0xAA //0b10101010
+#define BYTE_2 0xCC //0b11001100
+#define BYTE_3 0x77 //0b01110111
+#define BYTE_4 0x92 //0b10010010
+
+//Signals the end of a broadcast
+#define EOT 0x04 //End of Transmission
+
 // ----------------------------------------------------------------------------
 // Global variables
 // ----------------------------------------------------------------------------
@@ -23,7 +33,7 @@ void delay(const int d);
 // ----------------------------------------------------------------------------
 int main(){
 	//Data to broadcast
-	char data[MAX_LENGTH_BROADCAST_DATA] = "Test123";
+	char data[MIN_LENGTH_BROADCAST_DATA] = {BYTE_1, BYTE_2, BYTE_3, BYTE_4,	EOT};
 	
 	// Setup USART1 for terminal (PA9 & PA10)
   terminal_init();
@@ -35,10 +45,7 @@ int main(){
 	terminal_putstr("Bluetooth initialized\n");
 	
 	//Broadcast the data
-	terminal_putstr("Broadcasting data: \"");
-	terminal_putstr(data);
-	terminal_putstr("\"\n");
-	
+	terminal_putstr("Broadcasting data...");
 	bluetooth_broadcast(data);
 }
 

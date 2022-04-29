@@ -8,6 +8,7 @@
 #include "stdint.h"
 #include "stdbool.h"
 
+#define MIN_LENGTH_BROADCAST_DATA 5
 #define MAX_LENGTH_BROADCAST_DATA 12
 
 //AT commands for the Bluetooth modules
