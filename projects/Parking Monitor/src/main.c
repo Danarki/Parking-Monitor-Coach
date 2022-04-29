@@ -9,6 +9,13 @@
 
 #define SECONDE SystemCoreClock/8
 
+//---Data that goes into the bytes---
+#define TIME_TO_LIVE 0x00 //Max 0x0F
+#define GATEWAY_ID 0x01 //Max 0x03
+#define VAK_ID 0x01 //Max 0x1FF
+#define RICHTING 0x00 //Max 0x01
+#define SENSOR_DATA 0x00 //Max 0x01
+
 // ----------------------------------------------------------------------------
 // Global variables
 // ----------------------------------------------------------------------------
@@ -34,7 +41,7 @@ int main(){
 	
 	//Broadcast data
 	terminal_putstr("Broadcasting data...");
-	bluetooth_broadcast();
+	bluetooth_broadcast(TIME_TO_LIVE, GATEWAY_ID, VAK_ID, RICHTING, SENSOR_DATA);
 }
 
 #pragma push
