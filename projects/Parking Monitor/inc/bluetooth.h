@@ -23,6 +23,14 @@
 //Used to signal the end of a broadcast
 #define EOT 0x04 //End of Transmission
 
+//Bitmasks to get data from bytes
+#define TIME_TO_LIVE_MASK 0x0F << 2
+#define GATEWAY_ID_MASK 0x03
+#define VAK_ID_D1_MASK 0x3F
+#define VAK_ID_D2_MASK 0x07 << 3
+#define RICHTING_MASK 0x01 << 2
+#define SENSOR_DATA_MASK 0x01 << 1
+
 //AT commands for the Bluetooth modules
 #define AT_AVDA "AT+AVDA="
 
@@ -33,5 +41,6 @@ void bluetooth_init(void);
 
 void bluetooth_broadcast(uint8_t time_to_live, uint8_t gateway_ID, uint16_t vak_ID, uint8_t richting, uint8_t sensor_data);
 void bluetooth_listen(void);
+void bluetooth_info_data(void);
 
 #endif // _BLUETOOTH_H_
