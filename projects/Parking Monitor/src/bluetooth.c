@@ -13,10 +13,10 @@
 // ----------------------------------------------------------------------------
 void bluetooth_putc(char c);
 void bluetooth_putstr(char *str);
-
-/*bool bluetooth_available(void);
 char bluetooth_getc(void);
-void bluetooth_getstr(char *str);*/
+void bluetooth_getstr(char *str);
+
+//bool bluetooth_available(void);
 
 void bluetooth_init()
 {
@@ -87,6 +87,24 @@ void bluetooth_broadcast(uint8_t time_to_live, uint8_t gateway_ID, uint16_t vak_
 	bluetooth_putc(EOT);
 }
 
+void bluetooth_listen()
+{
+	char receivedByte;
+	
+	while(1){
+		receivedByte = bluetooth_getc();
+		
+		if(receivedByte == EOT)
+		{
+			terminal_putc('\n');
+		}
+		else
+		{
+			terminal_putc(receivedByte);
+		}
+	}
+}
+
 void bluetooth_putc(char c)
 {
   // Wait for Transmit data register empty
@@ -107,16 +125,6 @@ void bluetooth_putstr(char *str)
     
     bluetooth_putc(*str++);
   }
-}
-
-/*bool bluetooth_available()
-{
-	if(USART2->ISR & USART_ISR_RXNE)
-	{
-		return true;
-	}
-	
-	return false;
 }
 
 char bluetooth_getc(void)
@@ -145,8 +153,8 @@ void bluetooth_getstr(char *str)
   {
 		char c = bluetooth_getc();
 		
-		//When enter is pressed (carrige return)
-    if(c == '\r')
+		//When the end of transmission is reached
+    if(c == EOT)
     {
 			break;
     }
@@ -154,4 +162,14 @@ void bluetooth_getstr(char *str)
 		*str = c;
 		str++;
 	}
+}
+
+/*bool bluetooth_available()
+{
+	if(USART2->ISR & USART_ISR_RXNE)
+	{
+		return true;
+	}
+	
+	return false;
 }*/

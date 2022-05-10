@@ -5,8 +5,10 @@
 #define _BLUETOOTH_H_
 
 #include "stm32f0xx.h"
+#include "usart.h"
 #include "stdint.h"
 #include "stdbool.h"
+#include "string.h"
 
 //Amount of bytes in a broadcast
 #define MIN_LENGTH_BROADCAST_DATA 5
@@ -30,5 +32,6 @@
 void bluetooth_init(void);
 
 void bluetooth_broadcast(uint8_t time_to_live, uint8_t gateway_ID, uint16_t vak_ID, uint8_t richting, uint8_t sensor_data);
+void bluetooth_listen(void);
 
 #endif // _BLUETOOTH_H_

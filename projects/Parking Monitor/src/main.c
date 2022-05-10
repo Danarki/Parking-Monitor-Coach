@@ -40,8 +40,12 @@ int main(){
 	terminal_putstr("Bluetooth initialized\n");
 	
 	//Broadcast data
-	terminal_putstr("Broadcasting data...");
-	bluetooth_broadcast(TIME_TO_LIVE, GATEWAY_ID, VAK_ID, RICHTING, SENSOR_DATA);
+	//terminal_putstr("Broadcasting data...");
+	//bluetooth_broadcast(TIME_TO_LIVE, GATEWAY_ID, VAK_ID, RICHTING, SENSOR_DATA);
+	
+	//Listen for data
+	terminal_putstr("Listening for data...\n");
+	bluetooth_listen();
 }
 
 #pragma push
