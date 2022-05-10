@@ -102,12 +102,14 @@ void bluetooth_listen()
 			for(i = 0; i < 5; i++)
 			{
 				terminal_putc('(');
-				terminal_putc(receivedBytes[byteCounter]);
+				terminal_putc(receivedBytes[i]);
 				terminal_putc(')');
 			}
 			
 			terminal_putc('\r');
 			terminal_putc('\n');
+			
+			byteCounter = 0;
 		}
 		else
 		{
