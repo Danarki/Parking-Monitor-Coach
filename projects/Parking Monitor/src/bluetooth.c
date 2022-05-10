@@ -89,18 +89,30 @@ void bluetooth_broadcast(uint8_t time_to_live, uint8_t gateway_ID, uint16_t vak_
 
 void bluetooth_listen()
 {
-	char receivedByte;
+	uint8_t receivedBytes[4];
+	uint8_t byteCounter = 0;
 	
 	while(1){
-		receivedByte = bluetooth_getc();
+		char newByte = bluetooth_getc();
 		
-		if(receivedByte == EOT)
+		if(newByte == EOT)
 		{
+			uint8_t i;
+			
+			for(i = 0; i < 5; i++)
+			{
+				terminal_putc('(');
+				terminal_putc(receivedBytes[byteCounter]);
+				terminal_putc(')');
+			}
+			
+			terminal_putc('\r');
 			terminal_putc('\n');
 		}
 		else
 		{
-			terminal_putc(receivedByte);
+			receivedBytes[byteCounter] = newByte;
+			byteCounter++;
 		}
 	}
 }
