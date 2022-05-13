@@ -44,8 +44,10 @@ int main(){
 	//bluetooth_broadcast(TIME_TO_LIVE, GATEWAY_ID, VAK_ID, RICHTING, SENSOR_DATA);
 	
 	//Listen for data
-	terminal_putstr("Listening for data...\n");
-	bluetooth_listen();
+	while(1){
+		terminal_putstr("Listening for data...\n");
+		bluetooth_listen();
+	}
 }
 
 #pragma push

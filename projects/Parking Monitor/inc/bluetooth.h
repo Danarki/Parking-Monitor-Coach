@@ -8,7 +8,8 @@
 #include "usart.h"
 #include "stdint.h"
 #include "stdbool.h"
-#include "string.h"
+
+#include "binary_numbers.h"
 
 //Amount of bytes in a broadcast
 #define MIN_LENGTH_BROADCAST_DATA 5

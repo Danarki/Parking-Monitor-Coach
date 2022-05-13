@@ -6,7 +6,7 @@
 // ----------------------------------------------------------------------------
 // Global variables
 // ----------------------------------------------------------------------------
-uint8_t receivedBytes[4];
+uint8_t receivedBytes[4]; //Bytes received through a broadcast
 
 // ----------------------------------------------------------------------------
 // Local function prototypes
@@ -15,11 +15,6 @@ void bluetooth_putc(char c);
 void bluetooth_putstr(char *str);
 char bluetooth_getc(void);
 void bluetooth_getstr(char *str);
-
-void print_binary_short(uint8_t byte, uint8_t length);
-void print_binary_long(uint16_t byte, uint8_t length);
-
-//bool bluetooth_available(void);
 
 void bluetooth_init()
 {
@@ -102,6 +97,7 @@ void bluetooth_listen()
 			bluetooth_info_data();
 			
 			byteCounter = 0;
+			break;
 		}
 		else
 		{
@@ -116,7 +112,8 @@ void bluetooth_info_data()
 	
 	terminal_putstr("Broadcast received!\n");
 	terminal_putstr("-------------------\n");
-
+	
+	//---A shorter/easier version for debugging---
 	/*terminal_putstr("Byte 1: ");
 	print_binary(receivedBytes[0]);
 	terminal_putstr("\n");
@@ -216,56 +213,3 @@ void bluetooth_getstr(char *str)
 	}
 }
 
-void print_binary_short(uint8_t byte, uint8_t length)
-{
-	uint8_t bitmask = 0x01 << (length - 1);
-	uint8_t bitCounter = 0;
-	
-	terminal_putstr("0b");
-	
-	while(bitCounter < length)
-	{
-		if(byte & (bitmask >> bitCounter))
-		{
-			terminal_putc('1');
-		}	
-		else
-		{
-			terminal_putc('0');
-		}
-		
-		bitCounter++;
-	}	
-}
-
-void print_binary_long(uint16_t byte, uint8_t length)
-{
-	uint16_t bitmask = 0x01 << (length - 1);
-	uint16_t bitCounter = 0;
-	
-	terminal_putstr("0b");
-	
-	while(bitCounter < length)
-	{
-		if(byte & (bitmask >> bitCounter))
-		{
-			terminal_putc('1');
-		}	
-		else
-		{
-			terminal_putc('0');
-		}
-		
-		bitCounter++;
-	}	
-}
-
-/*bool bluetooth_available()
-{
-	if(USART2->ISR & USART_ISR_RXNE)
-	{
-		return true;
-	}
-	
-	return false;
-}*/

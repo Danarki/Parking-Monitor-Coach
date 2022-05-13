@@ -406,6 +406,11 @@
               <FileType>1</FileType>
               <FilePath>.\src\bluetooth.c</FilePath>
             </File>
+            <File>
+              <FileName>binary_numbers.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\binary_numbers.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
