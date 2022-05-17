@@ -16,6 +16,8 @@ void bluetooth_putstr(char *str);
 char bluetooth_getc(void);
 void bluetooth_getstr(char *str);
 
+void bluetooth_info_debug(void);
+
 void bluetooth_init()
 {
 	// GPIOA Periph clock enable
@@ -94,7 +96,8 @@ void bluetooth_listen()
 		
 		if(newByte == EOT)
 		{
-			bluetooth_info_data();
+			//bluetooth_info_data();
+			bluetooth_info_debug();
 			
 			byteCounter = 0;
 			break;
@@ -106,29 +109,14 @@ void bluetooth_listen()
 		}
 	}
 }
+
 void bluetooth_info_data()
 {
 	uint16_t vakID = 0;
 	
+	terminal_putstr("-------------------\n");
 	terminal_putstr("Broadcast received!\n");
 	terminal_putstr("-------------------\n");
-	
-	//---A shorter/easier version for debugging---
-	/*terminal_putstr("Byte 1: ");
-	print_binary(receivedBytes[0]);
-	terminal_putstr("\n");
-	
-	terminal_putstr("Byte 2: ");
-	print_binary(receivedBytes[1]);
-	terminal_putstr("\n");
-	
-	terminal_putstr("Byte 3: ");
-	print_binary(receivedBytes[2]);
-	terminal_putstr("\n");
-	
-	terminal_putstr("Byte 4: ");
-	print_binary(receivedBytes[3]);
-	terminal_putstr("\n");*/
 	
 	terminal_putstr("Time to live: ");
 	print_binary_short((receivedBytes[0] & TIME_TO_LIVE_MASK) >> 2, 4);
@@ -152,6 +140,30 @@ void bluetooth_info_data()
 	terminal_putstr("\n");
 	
 	terminal_putstr("-------------------\n");
+	
+	memset(receivedBytes, 0, 4);
+}
+
+void bluetooth_info_debug()
+{
+	//---A shorter/easier version for debugging---
+	terminal_putstr("Byte 1: ");
+	print_binary_short(receivedBytes[0], 8);
+	terminal_putstr("\n");
+	
+	terminal_putstr("Byte 2: ");
+	print_binary_short(receivedBytes[1], 8);
+	terminal_putstr("\n");
+	
+	terminal_putstr("Byte 3: ");
+	print_binary_short(receivedBytes[2], 8);
+	terminal_putstr("\n");
+	
+	terminal_putstr("Byte 4: ");
+	print_binary_short(receivedBytes[3], 8);
+	terminal_putstr("\n");
+	
+	memset(receivedBytes, 0, 4);
 }
 
 void bluetooth_putc(char c)

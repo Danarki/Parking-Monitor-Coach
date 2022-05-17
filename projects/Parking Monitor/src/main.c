@@ -12,7 +12,7 @@
 //---Data that goes into the bytes---
 #define TIME_TO_LIVE 0x00 //Max 0x0F
 #define GATEWAY_ID 0x01 //Max 0x03
-#define VAK_ID 0x01 //Max 0x1FF
+#define VAK_ID 0x02 //Max 0x1FF
 #define RICHTING 0x00 //Max 0x01
 #define SENSOR_DATA 0x00 //Max 0x01
 
@@ -39,14 +39,18 @@ int main(){
 	bluetooth_init();
 	terminal_putstr("Bluetooth initialized\n");
 	
-	//Broadcast data
-	//terminal_putstr("Broadcasting data...");
-	//bluetooth_broadcast(TIME_TO_LIVE, GATEWAY_ID, VAK_ID, RICHTING, SENSOR_DATA);
-	
-	//Listen for data
 	while(1){
+		//Listen for data
 		terminal_putstr("Listening for data...\n");
 		bluetooth_listen();
+		
+		delay(SECONDE * 5);
+		
+		//Broadcast data
+		terminal_putstr("Broadcasting data...\n");
+		bluetooth_broadcast(TIME_TO_LIVE, GATEWAY_ID, VAK_ID, RICHTING, SENSOR_DATA);
+		
+		delay(SECONDE * 5);
 	}
 }
 
