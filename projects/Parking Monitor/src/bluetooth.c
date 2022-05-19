@@ -9,6 +9,9 @@
 char broadcastBytes[MAX_LENGTH_BROADCAST_DATA]; //Bytes broadcasted to other devices
 char receivedBytes[MAX_LENGTH_BROADCAST_DATA]; //Bytes received through a broadcast
 
+uint8_t gateway_ID;
+uint16_t vak_ID;
+
 // ----------------------------------------------------------------------------
 // Local function prototypes
 // ----------------------------------------------------------------------------
@@ -48,8 +51,11 @@ void bluetooth_init()
   USART2->CR3 = 0; 
 }
 
-void bluetooth_set_name(char *vaknaam)
+void bluetooth_set_name(char *vaknaam, uint8_t local_gateway_ID, uint16_t local_vak_ID)
 {
+	gateway_ID = local_gateway_ID;
+	vak_ID = local_vak_ID;
+	
 	bluetooth_putstr(AT_NAME);
 	bluetooth_putstr(vaknaam);
 }
@@ -65,7 +71,12 @@ void bluetooth_set_broadcast_mode()
 	bluetooth_putc('S');	
 }
 
-void bluetooth_broadcast(uint8_t time_to_live, uint8_t gateway_ID, uint16_t vak_ID, uint8_t richting, uint8_t sensor_data)
+void bluetooth_broadcast_occupation(bool is_parking_space_occupied)
+{
+	bluetooth_broadcast(0, DIRECTION_GATEWAY, (uint8_t) is_parking_space_occupied);
+}
+
+void bluetooth_broadcast(uint8_t time_to_live, uint8_t richting, uint8_t data)
 {
 	//Prepare the vak ID for broadcasting
 	uint16_t vakIDHonderdtal = vak_ID - (vak_ID % 100);
@@ -83,7 +94,7 @@ void bluetooth_broadcast(uint8_t time_to_live, uint8_t gateway_ID, uint16_t vak_
 	broadcastBytes[7] = vakIDEental + '0';
 	broadcastBytes[8] = 'D';
 	broadcastBytes[9] = richting + '0';
-	broadcastBytes[10] = sensor_data + '0';
+	broadcastBytes[10] = data + '0';
 	broadcastBytes[11] = ETX;
 	
 	//Start broadcasting the bytes

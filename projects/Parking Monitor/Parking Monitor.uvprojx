@@ -500,13 +500,6 @@
         </Group>
         <Group>
           <GroupName>lib</GroupName>
-          <Files>
-            <File>
-              <FileName>velostat-reader.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\lib\velostat-reader.c</FilePath>
-            </File>
-          </Files>
         </Group>
       </Groups>
     </Target>
