@@ -397,6 +397,11 @@
               <FilePath>.\src\main.c</FilePath>
             </File>
             <File>
+              <FileName>helper.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\helper.c</FilePath>
+            </File>
+            <File>
               <FileName>led_functions.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\led_functions.c</FilePath>
@@ -471,6 +476,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_usart.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f0xx_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\STM32F0xx_StdPeriph_Driver\src\stm32f0xx_adc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -485,6 +495,16 @@
               <FileName>system_stm32f0xx.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\startup\system_stm32f0xx.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>lib</GroupName>
+          <Files>
+            <File>
+              <FileName>velostat-reader.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\lib\velostat-reader.c</FilePath>
             </File>
           </Files>
         </Group>
