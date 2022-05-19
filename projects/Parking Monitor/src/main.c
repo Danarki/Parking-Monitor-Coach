@@ -51,18 +51,19 @@ int main(){
 	
 	while(1){
 		//Broadcast data
-		terminal_putstr("Broadcasting data...\n");
+		/*terminal_putstr("Broadcasting data...\n");
 		bluetooth_set_broadcast_mode();
 		delay(SECONDE);
 		bluetooth_broadcast(TIME_TO_LIVE, GATEWAY_ID, VAK_ID, RICHTING, SENSOR_DATA);
 		
-		delay(SECONDE * 5);
+		delay(SECONDE * 5);*/
 		
 		//Listen for data
 		terminal_putstr("Listening for data...\n");
 		bluetooth_set_listening_mode();
 		delay(SECONDE);
 		bluetooth_listen();
+		bluetooth_info_data();
 		
 		delay(SECONDE * 5);
 	}

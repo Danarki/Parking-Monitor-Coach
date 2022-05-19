@@ -21,7 +21,9 @@
 #define BYTE_ID_3 0x02 << 6; //Max 0x03
 #define BYTE_ID_4 0x03 << 6; //Max 0x03
 
-//Used to signal the end of a broadcast
+//Used to signal the start and end of a broadcast
+#define STX 0x02 //Start of Text
+#define ETX 0x03 //End of Text
 #define EOT 0x04 //End of Transmission
 
 //Bitmasks to get data from bytes
@@ -44,10 +46,10 @@
 void bluetooth_init(void);
 
 void bluetooth_set_name(char *vaknaam);
-void bluetooth_set_connect_ability();
+void bluetooth_set_connect_ability(void);
 
-void bluetooth_set_broadcast_mode();
-void bluetooth_set_listening_mode();
+void bluetooth_set_broadcast_mode(void);
+void bluetooth_set_listening_mode(void);
 
 void bluetooth_broadcast(uint8_t time_to_live, uint8_t gateway_ID, uint16_t vak_ID, uint8_t richting, uint8_t sensor_data);
 void bluetooth_listen(void);
