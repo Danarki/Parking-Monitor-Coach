@@ -48,6 +48,29 @@ void bluetooth_init()
   USART2->CR3 = 0; 
 }
 
+void bluetooth_set_name(char *vaknaam)
+{
+	bluetooth_putstr(AT_NAME);
+	bluetooth_putstr(vaknaam);
+}
+
+void bluetooth_set_connect_ability()
+{
+	bluetooth_putstr(AT_CONT);
+}
+
+void bluetooth_set_broadcast_mode()
+{
+	bluetooth_putstr(AT_ROLE);
+	bluetooth_putc('S');	
+}
+
+void bluetooth_set_listening_mode()
+{
+	bluetooth_putstr(AT_ROLE);
+	bluetooth_putc('M');
+}
+
 void bluetooth_broadcast(uint8_t time_to_live, uint8_t gateway_ID, uint16_t vak_ID, uint8_t richting, uint8_t sensor_data)
 {
 	//These bytes of data are going to be broadcast
@@ -96,8 +119,8 @@ void bluetooth_listen()
 		
 		if(newByte == EOT)
 		{
-			//bluetooth_info_data();
-			bluetooth_info_debug();
+			bluetooth_info_data();
+			//bluetooth_info_debug();
 			
 			byteCounter = 0;
 			break;

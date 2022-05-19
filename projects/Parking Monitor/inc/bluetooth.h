@@ -33,12 +33,21 @@
 #define SENSOR_DATA_MASK 0x01 << 1
 
 //AT commands for the Bluetooth modules
+#define AT_NAME "AT+NAME="
+#define AT_CONT "AT+CONT=1"
+#define AT_ROLE "AT+ROLE="
 #define AT_AVDA "AT+AVDA="
 
 /******************************************************************************
   Function prototypes
 ******************************************************************************/
 void bluetooth_init(void);
+
+void bluetooth_set_name(char *vaknaam);
+void bluetooth_set_connect_ability();
+
+void bluetooth_set_broadcast_mode();
+void bluetooth_set_listening_mode();
 
 void bluetooth_broadcast(uint8_t time_to_live, uint8_t gateway_ID, uint16_t vak_ID, uint8_t richting, uint8_t sensor_data);
 void bluetooth_listen(void);

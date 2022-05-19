@@ -9,6 +9,8 @@
 
 #define SECONDE SystemCoreClock/8
 
+#define VAKNAAM "P1-002"
+
 //---Data that goes into the bytes---
 #define TIME_TO_LIVE 0x00 //Max 0x0F
 #define GATEWAY_ID 0x01 //Max 0x03
@@ -39,16 +41,28 @@ int main(){
 	bluetooth_init();
 	terminal_putstr("Bluetooth initialized\n");
 	
+	bluetooth_set_name(VAKNAAM);
+	delay(SECONDE);
+	terminal_putstr("Naam geupdated\n");
+	
+	bluetooth_set_connect_ability();
+	delay(SECONDE);
+	terminal_putstr("Connect ability = 1\n");
+	
 	while(1){
-		//Listen for data
-		terminal_putstr("Listening for data...\n");
-		bluetooth_listen();
+		//Broadcast data
+		terminal_putstr("Broadcasting data...\n");
+		bluetooth_set_broadcast_mode();
+		delay(SECONDE);
+		bluetooth_broadcast(TIME_TO_LIVE, GATEWAY_ID, VAK_ID, RICHTING, SENSOR_DATA);
 		
 		delay(SECONDE * 5);
 		
-		//Broadcast data
-		terminal_putstr("Broadcasting data...\n");
-		bluetooth_broadcast(TIME_TO_LIVE, GATEWAY_ID, VAK_ID, RICHTING, SENSOR_DATA);
+		//Listen for data
+		terminal_putstr("Listening for data...\n");
+		bluetooth_set_listening_mode();
+		delay(SECONDE);
+		bluetooth_listen();
 		
 		delay(SECONDE * 5);
 	}
