@@ -11,7 +11,7 @@
 
 #define VAKNAAM "P1-002"
 
-//---Data that goes into the bytes---
+//---Data that goes into the bytes of a broadcast---
 #define TIME_TO_LIVE 0x05 //Max 0x09
 #define GATEWAY_ID 0x01 //Max 0x09
 #define VAK_ID 0xDE //Max 0x3E7
@@ -43,11 +43,11 @@ int main(){
 	
 	bluetooth_set_name(VAKNAAM);
 	delay(SECONDE);
-	terminal_putstr("Naam geupdated\n");
+	terminal_putstr("Module name updated\n");
 	
 	bluetooth_set_connect_ability();
 	delay(SECONDE);
-	terminal_putstr("Connect ability = 1\n");
+	terminal_putstr("Connect ability set\n");
 	
 	while(1){
 		//Broadcast data
@@ -63,7 +63,6 @@ int main(){
 		bluetooth_set_listening_mode();
 		delay(SECONDE);
 		bluetooth_listen();
-		bluetooth_info_data();
 		
 		delay(SECONDE * 5);
 	}

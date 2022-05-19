@@ -6,8 +6,8 @@
 // ----------------------------------------------------------------------------
 // Global variables
 // ----------------------------------------------------------------------------
-uint8_t receivedBytes[MAX_LENGTH_BROADCAST_DATA]; //Bytes received through a broadcast
-bool startedTransmission;
+char broadcastBytes[MAX_LENGTH_BROADCAST_DATA]; //Bytes broadcasted to other devices
+char receivedBytes[MAX_LENGTH_BROADCAST_DATA]; //Bytes received through a broadcast
 
 // ----------------------------------------------------------------------------
 // Local function prototypes
@@ -15,9 +15,8 @@ bool startedTransmission;
 void bluetooth_putc(char c);
 void bluetooth_putstr(char *str);
 char bluetooth_getc(void);
-void bluetooth_getstr(char *str);
 
-void bluetooth_info_debug(void);
+void bluetooth_print_info(char *bluetooth_data);
 
 void bluetooth_init()
 {
@@ -66,143 +65,87 @@ void bluetooth_set_broadcast_mode()
 	bluetooth_putc('S');	
 }
 
+void bluetooth_broadcast(uint8_t time_to_live, uint8_t gateway_ID, uint16_t vak_ID, uint8_t richting, uint8_t sensor_data)
+{
+	//Prepare the vak ID for broadcasting
+	uint16_t vakIDHonderdtal = vak_ID - (vak_ID % 100);
+  uint8_t vakIDTiental = (vak_ID - vakIDHonderdtal) - ((vak_ID % 100) % 10);
+  uint8_t vakIDEental = (vak_ID % 100) % 10;
+	
+	//Gather the required data
+	broadcastBytes[0] = STX;
+	broadcastBytes[1] = 'T';
+	broadcastBytes[2] = time_to_live + '0';
+	broadcastBytes[3] = 'V';
+	broadcastBytes[4] = gateway_ID + '0';
+	broadcastBytes[5] = (vakIDHonderdtal / 100) + '0';
+	broadcastBytes[6] = (vakIDTiental / 10) + '0';
+	broadcastBytes[7] = vakIDEental + '0';
+	broadcastBytes[8] = 'D';
+	broadcastBytes[9] = richting + '0';
+	broadcastBytes[10] = sensor_data + '0';
+	broadcastBytes[11] = ETX;
+	
+	//Start broadcasting the bytes
+	bluetooth_putstr(AT_AVDA);
+	bluetooth_putstr(broadcastBytes);
+	
+	bluetooth_print_info(broadcastBytes);
+}
+
 void bluetooth_set_listening_mode()
 {
 	bluetooth_putstr(AT_ROLE);
 	bluetooth_putc('M');
 }
 
-void bluetooth_broadcast(uint8_t time_to_live, uint8_t gateway_ID, uint16_t vak_ID, uint8_t richting, uint8_t sensor_data)
-{
-	uint16_t vakIDHonderdtal = vak_ID - (vak_ID % 100);
-  uint8_t vakIDTiental = (vak_ID - vakIDHonderdtal) - ((vak_ID % 100) % 10);
-  uint8_t vakIDEental = (vak_ID % 100) % 10;
-	
-	//Start broadcasting the bytes
-	bluetooth_putstr(AT_AVDA);
-
-  bluetooth_putc(STX);
-  terminal_putc('+');
-  
-  bluetooth_putc('T');
-  terminal_putc('T');
-
-  bluetooth_putc(time_to_live + '0');
-  terminal_putc(time_to_live + '0');
-
-  bluetooth_putc('V');
-  terminal_putc('V');
-
-  bluetooth_putc(gateway_ID + '0');
-  terminal_putc(gateway_ID + '0');
-
-  vakIDHonderdtal = vakIDHonderdtal / 100;
-  bluetooth_putc(vakIDHonderdtal + '0');
-  terminal_putc(vakIDHonderdtal + '0');
-
-  vakIDTiental = vakIDTiental / 10;
-  bluetooth_putc(vakIDTiental + '0');
-  terminal_putc(vakIDTiental + '0');
-
-  bluetooth_putc(vakIDEental + '0');
-  terminal_putc(vakIDEental + '0');
-
-  bluetooth_putc('D');
-  terminal_putc('D');
-  
-  bluetooth_putc(richting + '0');
-  terminal_putc(richting + '0');
-  
-  bluetooth_putc(sensor_data + '0');
-  terminal_putc(sensor_data + '0');
-
-  bluetooth_putc(ETX);
-  terminal_putstr("-\n");
-}
-
 void bluetooth_listen()
 {
-	char newByte = ' ';
-	uint8_t byteCounter = 0;
-	
-	startedTransmission = false;
+	char new_byte = ' ';
+	bool started_transmission = false;
+	uint8_t byte_counter = 0;
 	
 	do
 	{
-		newByte = bluetooth_getc();
+		new_byte = bluetooth_getc();
 		
-		if(newByte == STX)
+		if(new_byte == STX)
 		{
-			startedTransmission = true;
+			started_transmission = true;
 		}
 		
-		if(startedTransmission && (byteCounter == 0 || (byteCounter > 0 && newByte != STX)))
+		if(started_transmission && (byte_counter == 0 || (byte_counter > 0 && new_byte != STX)))
 		{
-			receivedBytes[byteCounter] = newByte;
-			byteCounter++;
+			receivedBytes[byte_counter] = new_byte;
+			byte_counter++;
 		}
 		
-	} while(newByte != ETX);
+	} while(new_byte != ETX);
 	
-	//bluetooth_info_debug();
+	bluetooth_print_info(receivedBytes);
 }
 
-void bluetooth_info_debug()
+void bluetooth_print_info(char *bluetooth_data)
 {
-	uint8_t i = 0;
+	uint8_t i;
 	
 	for(i = 0; i < MAX_LENGTH_BROADCAST_DATA; i++)
 	{
-		if(receivedBytes[i] == STX)
+		if(bluetooth_data[i] == STX)
 		{
 			terminal_putc('+');
 		}
-		else if(receivedBytes[i] == ETX)
+		else if(bluetooth_data[i] == ETX)
 		{
 			terminal_putc('-');
 		}
 		else
 		{
-			terminal_putc(receivedBytes[i]);
+			terminal_putc(bluetooth_data[i]);
 		}
 	}
 	
-	terminal_putc('\n');
-	terminal_putc('\r');
-}
-
-void bluetooth_info_data()
-{
-	uint8_t i = 0;
-	
-	terminal_putstr("-------------------\n");
-	terminal_putstr("Broadcast received!\n");
-	terminal_putstr("-------------------\n");
-	
-	terminal_putstr("Time to live: ");
-	terminal_putc(receivedBytes[2]);
 	terminal_putstr("\n");
-
-	terminal_putstr("Gateway ID: ");
-	terminal_putc(receivedBytes[4]);
-	terminal_putstr("\n");
-
-	terminal_putstr("Vak ID: ");
-	for(i = 5; i < 8; i++)
-	{
-		terminal_putc(receivedBytes[i]);
-	}
-	terminal_putstr("\n");
-
-	terminal_putstr("Richting: ");
-	terminal_putc(receivedBytes[9]);
-	terminal_putstr("\n");
-
-	terminal_putstr("Sensordata: ");
-	terminal_putc(receivedBytes[10]);
-	terminal_putstr("\n");
-	
-	terminal_putstr("-------------------\n");
 }
 
 void bluetooth_putc(char c)
@@ -247,20 +190,5 @@ char bluetooth_getc(void)
   return(c);
 }
 
-void bluetooth_getstr(char *str)
-{
-  while(1)
-  {
-		char c = bluetooth_getc();
-		
-		//When the end of transmission is reached
-    if(c == EOT)
-    {
-			break;
-    }
-		
-		*str = c;
-		str++;
-	}
-}
+
 
