@@ -12,11 +12,11 @@
 #define VAKNAAM "P1-002"
 
 //---Data that goes into the bytes---
-#define TIME_TO_LIVE 0x00 //Max 0x0F
-#define GATEWAY_ID 0x01 //Max 0x03
-#define VAK_ID 0x02 //Max 0x1FF
-#define RICHTING 0x00 //Max 0x01
-#define SENSOR_DATA 0x00 //Max 0x01
+#define TIME_TO_LIVE 0x06 //Max 0x09
+#define GATEWAY_ID 0x03 //Max 0x09
+#define VAK_ID 0x35E //Max 0x3E7
+#define RICHTING 0x00 //Max 0x09
+#define SENSOR_DATA 0x01 //Max 0x09
 
 // ----------------------------------------------------------------------------
 // Global variables
@@ -51,21 +51,21 @@ int main(){
 	
 	while(1){
 		//Broadcast data
-		/*terminal_putstr("Broadcasting data...\n");
+		terminal_putstr("Broadcasting data...\n");
 		bluetooth_set_broadcast_mode();
 		delay(SECONDE);
 		bluetooth_broadcast(TIME_TO_LIVE, GATEWAY_ID, VAK_ID, RICHTING, SENSOR_DATA);
 		
-		delay(SECONDE * 5);*/
+		delay(SECONDE * 5);
 		
 		//Listen for data
-		terminal_putstr("Listening for data...\n");
+		/*terminal_putstr("Listening for data...\n");
 		bluetooth_set_listening_mode();
 		delay(SECONDE);
 		bluetooth_listen();
 		bluetooth_info_data();
 		
-		delay(SECONDE * 5);
+		delay(SECONDE * 5);*/
 	}
 }
 

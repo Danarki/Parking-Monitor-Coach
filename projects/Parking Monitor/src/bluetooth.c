@@ -74,41 +74,50 @@ void bluetooth_set_listening_mode()
 
 void bluetooth_broadcast(uint8_t time_to_live, uint8_t gateway_ID, uint16_t vak_ID, uint8_t richting, uint8_t sensor_data)
 {
-	//These bytes of data are going to be broadcast
-	uint8_t byte_one;
-	uint8_t byte_two;
-	uint8_t byte_three;
-	uint8_t byte_four;
-	
-	//Building the first byte
-	byte_one = BYTE_ID_1;
-	byte_one |= time_to_live << 2;
-	byte_one |= gateway_ID;
-	
-	//Building the second byte
-	byte_two = BYTE_ID_2;
-	byte_two |= (uint8_t)(vak_ID >> 3);
-	
-	//Building the third byte
-	byte_three = BYTE_ID_3;
-	byte_three |= ((uint8_t)(vak_ID << 5)) >> 2;
-	byte_three |= richting << 2;
-	byte_three |= sensor_data << 1;
-	
-	//Building the fourth byte
-	byte_four = BYTE_ID_4;
-	//Empty byte to prevent data corruption
+	uint16_t vakIDHonderdtal = vak_ID - (vak_ID % 100);
+  uint8_t vakIDTiental = (vak_ID - vakIDHonderdtal) - ((vak_ID % 100) % 10);
+  uint8_t vakIDEental = (vak_ID % 100) % 10;
 	
 	//Start broadcasting the bytes
 	bluetooth_putstr(AT_AVDA);
-	
-	bluetooth_putc(byte_one);
-	bluetooth_putc(byte_two);
-	bluetooth_putc(byte_three);
-	bluetooth_putc(byte_four);
-	
-	//End broadcast
-	bluetooth_putc(EOT);
+
+  bluetooth_putc(STX);
+  terminal_putc('+');
+  
+  bluetooth_putc('T');
+  terminal_putc('T');
+
+  bluetooth_putc(time_to_live + '0');
+  terminal_putc(time_to_live + '0');
+
+  bluetooth_putc('V');
+  terminal_putc('V');
+
+  bluetooth_putc(gateway_ID + '0');
+  terminal_putc(gateway_ID + '0');
+
+  vakIDHonderdtal = vakIDHonderdtal / 100;
+  bluetooth_putc(vakIDHonderdtal + '0');
+  terminal_putc(vakIDHonderdtal + '0');
+
+  vakIDTiental = vakIDTiental / 10;
+  bluetooth_putc(vakIDTiental + '0');
+  terminal_putc(vakIDTiental + '0');
+
+  bluetooth_putc(vakIDEental + '0');
+  terminal_putc(vakIDEental + '0');
+
+  bluetooth_putc('D');
+  terminal_putc('D');
+  
+  bluetooth_putc(richting + '0');
+  terminal_putc(richting + '0');
+  
+  bluetooth_putc(sensor_data + '0');
+  terminal_putc(sensor_data + '0');
+
+  bluetooth_putc(ETX);
+  terminal_putstr("-\n");
 }
 
 void bluetooth_listen()
@@ -135,7 +144,7 @@ void bluetooth_listen()
 		
 	} while(newByte != ETX);
 	
-	bluetooth_info_debug();
+	//bluetooth_info_debug();
 }
 
 void bluetooth_info_debug()
@@ -161,8 +170,6 @@ void bluetooth_info_debug()
 	terminal_putc('\n');
 	terminal_putc('\r');
 }
-
-
 
 void bluetooth_info_data()
 {
