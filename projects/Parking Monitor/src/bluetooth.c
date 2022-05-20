@@ -6,7 +6,6 @@
 // ----------------------------------------------------------------------------
 // Global variables
 // ----------------------------------------------------------------------------
-char broadcastBytes[MAX_LENGTH_BROADCAST_DATA]; //Bytes broadcasted to other devices
 char receivedBytes[MAX_LENGTH_BROADCAST_DATA]; //Bytes received through a broadcast
 
 uint8_t gateway_ID;
@@ -79,6 +78,9 @@ void bluetooth_broadcast_occupation()
 
 void bluetooth_broadcast(uint8_t time_to_live, uint8_t richting, uint8_t data)
 {
+	//Bytes broadcasted to other devices 
+	char broadcastBytes[MAX_LENGTH_BROADCAST_DATA]; 
+	
 	//Prepare the vak ID for broadcasting
 	uint16_t vakIDHonderdtal = vak_ID - (vak_ID % 100);
   uint8_t vakIDTiental = (vak_ID - vakIDHonderdtal) - ((vak_ID % 100) % 10);
@@ -146,6 +148,34 @@ void bluetooth_listen()
 		bluetooth_print_info(receivedBytes);
 	}
 }
+
+uint8_t bluetooth_get_gatewayID() 
+{ 
+	 return receivedBytes[4] - '0';
+} 
+ 
+uint16_t bluetooth_get_vakID() 
+{ 
+	uint16_t received_vakID = 0;
+	uint8_t i;
+	
+	for(i = 0; i < 3; i++)
+	{
+		received_vakID += (receivedBytes[i + 5] - '0') * pow(10, i);
+	}
+	
+	return received_vakID;
+} 
+uint8_t bluetooth_get_reservation() 
+{ 
+	//Only data that goes to a parking spot can be a reservation 
+	if(receivedBytes[9] - '0' == DIRECTION_PARKING_SPOT && receivedBytes[10] - '0' == 1) 
+	{ 
+		return 1; 
+	} 
+	 
+	return 0; 
+} 
 
 void bluetooth_print_info(char *bluetooth_data)
 {

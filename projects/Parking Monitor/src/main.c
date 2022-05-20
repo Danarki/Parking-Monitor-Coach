@@ -8,7 +8,10 @@
 #include "led_functions.h"
 #include "button.h"
 
+#define DIVIDER "- - - - - - - - - -\n"
+
 #define SECONDE SystemCoreClock/8
+#define FIVE_SECONDS SECONDE * 5
 
 #define VAKNAAM "P1-002"
 #define GATEWAY_ID 0x01 //Max 0x09
@@ -28,6 +31,8 @@ void delay(const int d);
 // Main
 // ----------------------------------------------------------------------------
 int main(){
+	bool is_parking_spot_reserved;
+	
 	// Setup USART1 for terminal (PA9 & PA10)
   terminal_init();
 	terminal_clearscreen();
@@ -37,6 +42,17 @@ int main(){
 	bluetooth_init();
 	terminal_putstr("Bluetooth initialized\n");
 	
+	//Initialize LEDs
+	init_LED_GPIO();
+	is_parking_spot_reserved = false;
+	updateLEDS(is_parking_spot_reserved + 1);
+	terminal_putstr("LEDs initialized\n");
+	
+	//Initialize User Button on STM32F0-Discovery
+	button_init();
+	terminal_putstr("User Button initialized\n");
+	
+	//Update a few settings of the bluetooth module
 	bluetooth_set_name(VAKNAAM, GATEWAY_ID, VAK_ID);
 	delay(SECONDE);
 	terminal_putstr("Module name updated\n");
@@ -45,9 +61,7 @@ int main(){
 	delay(SECONDE);
 	terminal_putstr("Connect ability set\n");
 	
-	//Initialize User Button on STM32F0-Discovery
-	button_init();
-	terminal_putstr("User Button initialized\n");
+	terminal_putstr(DIVIDER);
 	
 	while(1){
 		//Listen for data
@@ -55,28 +69,69 @@ int main(){
 		bluetooth_set_listening_mode();
 		delay(SECONDE);
 		bluetooth_listen();
-		
-		//Broadcast data
-		bluetooth_set_broadcast_mode();
-		delay(SECONDE);
+			
+		terminal_putstr(DIVIDER);
 		
 		//Check if the button state has changed (meaning no broadcast has been received)
 		if(get_button_flag())
 		{
+			terminal_putstr("Parking space occupation changed\n");
+			terminal_putstr("Updating LEDs...\n");
+			
+			if(get_last_state_button())
+			{
+				updateLEDS(2);
+			}	
+			else
+			{
+				updateLEDS(is_parking_spot_reserved + 1);
+			}
+			
+			//Broadcast data
 			terminal_putstr("Broadcasting own parking space occupation...\n");
+			bluetooth_set_broadcast_mode();
+			delay(SECONDE);
 			bluetooth_broadcast_occupation();
+			
+			//The broadcast lasts five seconds
+			delay(FIVE_SECONDS);
 		}
 		else
 		{
-			//Check if the received broadcast contains reservation data for this parking space
-			terminal_putstr("Reservation status parking space updated...\n");
-			
+			//Check if the received broadcast contains reservation data for this parking spot
+			if(bluetooth_get_gatewayID() == GATEWAY_ID && bluetooth_get_vakID() == VAK_ID)
+			{		
+				//If it does, update the LEDs
+				terminal_putstr("Reservation update received\n");
+				is_parking_spot_reserved = bluetooth_get_reservation();
+				
+				if(get_last_state_button())
+				{	
+					terminal_putstr("Can't update reservation\n");
+					terminal_putstr("Parking spot is already occupied\n");
+					//Do nothing, because the reservation doesn't matter
+				}	
+				else
+				{
+					terminal_putstr("Updating LEDs...\n");
+					updateLEDS(is_parking_spot_reserved + 1);
+				}
+			}
 			//Otherwise send a received broadcast further into the mesh netwerk;
-			terminal_putstr("Broadcasting received data...\n");
+			else
+			{
+				//Broadcast data
+				terminal_putstr("Broadcasting received data...\n");
+				bluetooth_set_broadcast_mode();
+				delay(SECONDE);
+				terminal_putstr("... ... ...\n");
+				
+				//The broadcast last five seconds
+				delay(FIVE_SECONDS);
+			}	
 		}
-		
-		//The broadcast takes five seconds
-		delay(SECONDE * 5);
+			
+		terminal_putstr(DIVIDER);
 	}
 }
 

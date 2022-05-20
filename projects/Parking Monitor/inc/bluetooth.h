@@ -6,6 +6,7 @@
 
 #include "stm32f0xx.h"
 #include "usart.h"
+#include "math.h"
 #include "stdint.h"
 #include "stdbool.h"
 
@@ -43,5 +44,8 @@ void bluetooth_broadcast(uint8_t time_to_live, uint8_t richting, uint8_t data);
 
 void bluetooth_set_listening_mode(void);
 void bluetooth_listen(void);
+uint8_t bluetooth_get_gatewayID(void); 
+uint16_t bluetooth_get_vakID(void); 
+uint8_t bluetooth_get_reservation(void); 
 
 #endif // _BLUETOOTH_H_

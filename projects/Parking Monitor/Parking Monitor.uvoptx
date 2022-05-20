@@ -153,27 +153,22 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>newByte</ItemText>
+          <ItemText>receivedBytes[i]</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>startedTransmission</ItemText>
+          <ItemText>receivedBytes</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>receivedBytes[i]</ItemText>
+          <ItemText>broadcastBytes</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>receivedBytes</ItemText>
-        </Ww>
-        <Ww>
-          <count>4</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>broadcastBytes</ItemText>
+          <ItemText>received_vakID</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>
