@@ -77,6 +77,10 @@ int main(){
 		
 		//The broadcast takes five seconds
 		delay(SECONDE * 5);
+	init_LED_GPIO();
+
+	while(true){
+		updateLEDS(2);
 	}
 }
 
