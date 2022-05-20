@@ -120,14 +120,23 @@ int main(){
 			//Otherwise send a received broadcast further into the mesh netwerk;
 			else
 			{
-				//Broadcast data
-				terminal_putstr("Broadcasting received data...\n");
-				bluetooth_set_broadcast_mode();
-				delay(SECONDE);
-				terminal_putstr("... ... ...\n");
-				
-				//The broadcast last five seconds
-				delay(FIVE_SECONDS);
+				//Check if the time to live has maxed out
+				if(bluetooth_get_time_to_live() == MAX_TIME_TO_LIVE)
+				{
+					terminal_putstr("Received data package has lived too long\n");
+					terminal_putstr("Dropping data package...\n");
+				}
+				else
+				{
+					//Broadcast data
+					terminal_putstr("Broadcasting received data...\n");
+					bluetooth_set_broadcast_mode();
+					delay(SECONDE);
+					bluetooth_broadcast_received_bytes();
+						
+					//The broadcast last five seconds
+					delay(FIVE_SECONDS);
+				}
 			}	
 		}
 			

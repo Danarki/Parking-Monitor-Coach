@@ -73,25 +73,25 @@ void bluetooth_set_broadcast_mode()
 
 void bluetooth_broadcast_occupation()
 {
-	bluetooth_broadcast(0, DIRECTION_GATEWAY, get_last_state_button());
+	bluetooth_broadcast(0, gateway_ID, vak_ID, DIRECTION_GATEWAY, get_last_state_button());
 }
 
-void bluetooth_broadcast(uint8_t time_to_live, uint8_t richting, uint8_t data)
+void bluetooth_broadcast(uint8_t time_to_live, uint8_t new_gateway_ID, uint16_t new_vak_ID, uint8_t richting, uint8_t data)
 {
 	//Bytes broadcasted to other devices 
 	char broadcastBytes[MAX_LENGTH_BROADCAST_DATA]; 
 	
 	//Prepare the vak ID for broadcasting
-	uint16_t vakIDHonderdtal = vak_ID - (vak_ID % 100);
-  uint8_t vakIDTiental = (vak_ID - vakIDHonderdtal) - ((vak_ID % 100) % 10);
-  uint8_t vakIDEental = (vak_ID % 100) % 10;
+	uint16_t vakIDHonderdtal = new_vak_ID - (new_vak_ID % 100);
+  uint8_t vakIDTiental = (new_vak_ID - vakIDHonderdtal) - ((new_vak_ID % 100) % 10);
+  uint8_t vakIDEental = (new_vak_ID % 100) % 10;
 	
 	//Gather the required data
 	broadcastBytes[0] = STX;
 	broadcastBytes[1] = 'T';
 	broadcastBytes[2] = time_to_live + '0';
 	broadcastBytes[3] = 'V';
-	broadcastBytes[4] = gateway_ID + '0';
+	broadcastBytes[4] = new_gateway_ID + '0';
 	broadcastBytes[5] = (vakIDHonderdtal / 100) + '0';
 	broadcastBytes[6] = (vakIDTiental / 10) + '0';
 	broadcastBytes[7] = vakIDEental + '0';
@@ -149,6 +149,11 @@ void bluetooth_listen()
 	}
 }
 
+uint8_t bluetooth_get_time_to_live()
+{
+	return receivedBytes[2] - '0';
+}
+
 uint8_t bluetooth_get_gatewayID() 
 { 
 	 return receivedBytes[4] - '0';
@@ -176,6 +181,23 @@ uint8_t bluetooth_get_reservation()
 	 
 	return 0; 
 } 
+
+uint8_t bluetooth_get_direction()
+{
+	return receivedBytes[9] - '0';
+}	
+
+uint8_t bluetooth_get_data()
+{
+	return receivedBytes[10] - '0';
+}
+
+void bluetooth_broadcast_received_bytes()
+{
+	uint8_t received_time_to_live = bluetooth_get_time_to_live();
+	
+	bluetooth_broadcast(received_time_to_live + 1, bluetooth_get_gatewayID(), bluetooth_get_vakID(), bluetooth_get_direction(), bluetooth_get_data());
+}
 
 void bluetooth_print_info(char *bluetooth_data)
 {

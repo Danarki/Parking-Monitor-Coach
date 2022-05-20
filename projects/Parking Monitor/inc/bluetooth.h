@@ -40,12 +40,17 @@ void bluetooth_set_connect_ability(void);
 
 void bluetooth_set_broadcast_mode(void);
 void bluetooth_broadcast_occupation(void);
-void bluetooth_broadcast(uint8_t time_to_live, uint8_t richting, uint8_t data);
+void bluetooth_broadcast(uint8_t time_to_live, uint8_t new_gateway_ID, uint16_t new_vak_ID, uint8_t richting, uint8_t data);
 
 void bluetooth_set_listening_mode(void);
 void bluetooth_listen(void);
+uint8_t bluetooth_get_time_to_live(void);
 uint8_t bluetooth_get_gatewayID(void); 
 uint16_t bluetooth_get_vakID(void); 
 uint8_t bluetooth_get_reservation(void); 
+uint8_t bluetooth_get_direction(void); 
+uint8_t bluetooth_get_data(void); 
+
+void bluetooth_broadcast_received_bytes(void);
 
 #endif // _BLUETOOTH_H_
