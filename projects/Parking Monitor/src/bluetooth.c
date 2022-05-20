@@ -17,6 +17,7 @@ uint16_t vak_ID;
 // ----------------------------------------------------------------------------
 void bluetooth_putc(char c);
 void bluetooth_putstr(char *str);
+bool bluetooth_available(void);
 char bluetooth_getc(void);
 
 void bluetooth_print_info(char *bluetooth_data);
@@ -118,22 +119,32 @@ void bluetooth_listen()
 	
 	do
 	{
-		new_byte = bluetooth_getc();
-		
-		if(new_byte == STX)
+		if(bluetooth_available())
 		{
-			started_transmission = true;
+			new_byte = bluetooth_getc();
+			
+			if(new_byte == STX)
+			{
+				started_transmission = true;
+			}
+			
+			if(started_transmission && (byte_counter == 0 || (byte_counter > 0 && new_byte != STX)))
+			{
+				receivedBytes[byte_counter] = new_byte;
+				byte_counter++;
+			}
 		}
-		
-		if(started_transmission && (byte_counter == 0 || (byte_counter > 0 && new_byte != STX)))
+		else if(!started_transmission && has_state_button_changed())
 		{
-			receivedBytes[byte_counter] = new_byte;
-			byte_counter++;
+			break;
 		}
 		
 	} while(new_byte != ETX);
 	
-	bluetooth_print_info(receivedBytes);
+	if(started_transmission)
+	{
+		bluetooth_print_info(receivedBytes);
+	}
 }
 
 void bluetooth_print_info(char *bluetooth_data)
@@ -179,6 +190,16 @@ void bluetooth_putstr(char *str)
     
     bluetooth_putc(*str++);
   }
+}
+
+bool bluetooth_available(void)
+{
+	if(USART2->ISR & USART_ISR_RXNE)
+	{
+		return true;
+	}
+	
+	return false;
 }
 
 char bluetooth_getc(void)

@@ -9,6 +9,8 @@
 #include "stdint.h"
 #include "stdbool.h"
 
+#include "button.h"
+
 #define MAX_LENGTH_BROADCAST_DATA 12 //Amount of bytes in a broadcast
 #define MAX_TIME_TO_LIVE 0x09 //Maximum time to live of a data package
 

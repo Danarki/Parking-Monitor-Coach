@@ -6,6 +6,7 @@
 #include "usart.h"
 #include "bluetooth.h"
 #include "led_functions.h"
+#include "button.h"
 
 #define SECONDE SystemCoreClock/8
 
@@ -21,7 +22,6 @@
 // ----------------------------------------------------------------------------
 // Function prototypes
 // ----------------------------------------------------------------------------
-bool button_pressed(void);
 void delay(const int d);
 
 // ----------------------------------------------------------------------------
@@ -46,38 +46,34 @@ int main(){
 	terminal_putstr("Connect ability set\n");
 	
 	//Initialize User Button on STM32F0-Discovery
-  STM_EVAL_PBInit(BUTTON_USER, BUTTON_MODE_GPIO);
+	button_init();
 	terminal_putstr("User Button initialized\n");
 	
 	while(1){
-		//Check status velostat (= user button)
-		
-		//Broadcast data
-		terminal_putstr("Broadcasting parking space occupation...\n");
-		bluetooth_set_broadcast_mode();
-		delay(SECONDE);
-		bluetooth_broadcast_occupation(button_pressed());
-		
-		delay(SECONDE * 5);
-		
 		//Listen for data
-		terminal_putstr("Listening for reservation data...\n");
+		terminal_putstr("Listening for data...\n");
 		bluetooth_set_listening_mode();
 		delay(SECONDE);
 		bluetooth_listen();
 		
+		//Broadcast data
+		bluetooth_set_broadcast_mode();
+		delay(SECONDE);
+		
+		if(get_button_flag()) //Check if the button state has changed
+		{
+			terminal_putstr("Broadcasting own parking space occupation...\n");
+			bluetooth_broadcast_occupation(get_last_state_button());
+		}
+		else
+		{
+			terminal_putstr("Broadcasting received data...\n");
+			//Send a received broadcast further into the mesh netwerk;
+		}
+		
+		//The broadcast takes five seconds
 		delay(SECONDE * 5);
 	}
-}
-
-bool button_pressed()
-{
-	if(STM_EVAL_PBGetState(BUTTON_USER) == Bit_SET)
-	{
-		return true;
-	}
-	
-	return false;
 }
 
 #pragma push
