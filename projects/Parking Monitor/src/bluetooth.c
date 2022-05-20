@@ -72,9 +72,9 @@ void bluetooth_set_broadcast_mode()
 	bluetooth_putc('S');	
 }
 
-void bluetooth_broadcast_occupation(bool is_parking_space_occupied)
+void bluetooth_broadcast_occupation()
 {
-	bluetooth_broadcast(0, DIRECTION_GATEWAY, (uint8_t) is_parking_space_occupied);
+	bluetooth_broadcast(0, DIRECTION_GATEWAY, get_last_state_button());
 }
 
 void bluetooth_broadcast(uint8_t time_to_live, uint8_t richting, uint8_t data)

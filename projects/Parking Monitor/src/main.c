@@ -60,15 +60,19 @@ int main(){
 		bluetooth_set_broadcast_mode();
 		delay(SECONDE);
 		
-		if(get_button_flag()) //Check if the button state has changed
+		//Check if the button state has changed (meaning no broadcast has been received)
+		if(get_button_flag())
 		{
 			terminal_putstr("Broadcasting own parking space occupation...\n");
-			bluetooth_broadcast_occupation(get_last_state_button());
+			bluetooth_broadcast_occupation();
 		}
 		else
 		{
+			//Check if the received broadcast contains reservation data for this parking space
+			terminal_putstr("Reservation status parking space updated...\n");
+			
+			//Otherwise send a received broadcast further into the mesh netwerk;
 			terminal_putstr("Broadcasting received data...\n");
-			//Send a received broadcast further into the mesh netwerk;
 		}
 		
 		//The broadcast takes five seconds

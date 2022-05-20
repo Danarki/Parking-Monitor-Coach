@@ -38,10 +38,10 @@ void bluetooth_set_name(char *vaknaam, uint8_t gateway_ID, uint16_t vak_ID);
 void bluetooth_set_connect_ability(void);
 
 void bluetooth_set_broadcast_mode(void);
-void bluetooth_broadcast_occupation(bool is_parking_space_occupied);
+void bluetooth_broadcast_occupation(void);
 void bluetooth_broadcast(uint8_t time_to_live, uint8_t richting, uint8_t data);
 
 void bluetooth_set_listening_mode(void);
-void bluetooth_listen(void); //<---Hier moeten nog comments bij
+void bluetooth_listen(void);
 
 #endif // _BLUETOOTH_H_
