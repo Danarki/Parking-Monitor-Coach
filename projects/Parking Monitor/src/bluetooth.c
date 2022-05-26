@@ -166,7 +166,7 @@ uint16_t bluetooth_get_vakID()
 	
 	for(i = 0; i < 3; i++)
 	{
-		received_vakID += (receivedBytes[i + 5] - '0') * pow(10, i);
+		received_vakID += (receivedBytes[i + 5] - '0') * pow(10, (2 - i));
 	}
 	
 	return received_vakID;
