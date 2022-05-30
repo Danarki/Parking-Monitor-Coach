@@ -116,6 +116,7 @@ def __enableModule__(serial):
                         print('Enabling module...')
                         wiringpi.serialPrintf(serial, (AT_CONT + '1'))
                         if __waitForOK__(serial):
+                                time.sleep(1)
                                 break
         
                 print('Module ready')
@@ -128,6 +129,7 @@ def __disableModule__(serial):
                         print('Disabling module...')
                         wiringpi.serialPrintf(serial, (AT_CONT + '0'))
                         if __waitForOK__(serial):
+                                time.sleep(1)
                                 break
         
                 print('Module disabled')
@@ -148,6 +150,7 @@ def init():
                 print('Updating module name...')
                 wiringpi.serialPrintf(serial, AT_NAME)
                 if __waitForX__(serial, STATUS_NAME):
+                        time.sleep(1)
                         break
         
     else:
@@ -162,14 +165,19 @@ def broadcast(serial, data):
                 print('Putting module in broadcast mode...')
                 wiringpi.serialPrintf(serial, AT_ROLE_S)
                 if __waitForOK__(serial):
+                        time.sleep(1)
+                        break
+                        
+        broadcast = chr(STX) + data + chr(ETX)
+        #__enableModule__(serial)
+        while True:
+                print('Start broadcast...')
+                wiringpi.serialPrintf(serial, (AT_AVDA_BASIS + broadcast))
+                if __waitForOK__(serial):
+                        time.sleep(1)
                         break
         
-        broadcast = chr(STX) + data + chr(ETX)
-        wiringpi.serialPrintf(serial, AT_AVDA_BASIS + broadcast)
-        
-        #__enableModule__(serial)
-        print('Start broadcast...')
-        print('Broadcasting: \'' + data + '\'')
+        print('Broadcasting: \'' + broadcast + '\'')
         time.sleep(BROADCAST_TIME_IN_SECONDS)
         
         print('End broadcast')
@@ -186,12 +194,14 @@ def listen(serial):
                 print('Putting module in listen mode...')
                 wiringpi.serialPrintf(serial, AT_ROLE_M)
                 if __waitForOK__(serial):
+                        time.sleep(1)
                         break
                         
         while True:
                 print('Disconnect previous slave...')
                 wiringpi.serialPrintf(serial, AT_CLEAR)
                 if __waitForOK__(serial):
+                        time.sleep(1)
                         break
         
         #__enableModule__(serial)
@@ -202,7 +212,7 @@ def listen(serial):
         while True:
             if wiringpi.serialDataAvail(serial):
                 b = wiringpi.serialGetchar(serial)
-                print('In: ' + chr(b))
+                #print('In: ' + chr(b))
                 
                 if b == STX:
                         hasTransmissionArrived = True

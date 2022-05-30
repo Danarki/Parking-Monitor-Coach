@@ -31,14 +31,13 @@ import server
 def main(args):
     serial = module.init()
     
-    newReservations = server.receive()
-    for newReservation in newReservations:
-        module.broadcast(serial, newReservation)
+    #newReservations = server.receive()
+    #for newReservation in newReservations:
+        #module.broadcast(serial, newReservation)
     
-    #print(server.send('T0V1001D01'))
-    #while True:
-        #server.send(module.listen(serial))
-        #time.sleep(1)
+    while True:
+        server.send(module.listen(serial))
+        time.sleep(1)
         
     return 0
 
