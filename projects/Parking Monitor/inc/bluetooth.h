@@ -29,6 +29,7 @@
 #define AT_CONT "AT+CONT=1"
 #define AT_ROLE "AT+ROLE="
 #define AT_AVDA "AT+AVDA="
+#define AT_CLEAR "AT+CLEAR"
 
 /******************************************************************************
   Function prototypes
@@ -43,6 +44,7 @@ void bluetooth_broadcast_occupation(void);
 void bluetooth_broadcast(uint8_t time_to_live, uint8_t new_gateway_ID, uint16_t new_vak_ID, uint8_t richting, uint8_t data);
 
 void bluetooth_set_listening_mode(void);
+void bluetooth_clear_slave_adress(void);
 void bluetooth_listen(void);
 uint8_t bluetooth_get_time_to_live(void);
 uint8_t bluetooth_get_gatewayID(void); 

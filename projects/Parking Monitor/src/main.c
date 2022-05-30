@@ -13,9 +13,9 @@
 #define SECONDE SystemCoreClock/8
 #define FIVE_SECONDS SECONDE * 5
 
-#define VAKNAAM "P1-002"
+#define VAKNAAM "P1-001"
 #define GATEWAY_ID 0x01 //Max 0x09
-#define VAK_ID 0xDE//Max 0x3E7
+#define VAK_ID 0x01//Max 0x3E7
 
 // ----------------------------------------------------------------------------
 // Global variables
@@ -65,9 +65,15 @@ int main(){
 	
 	while(1){
 		//Listen for data
-		terminal_putstr("Listening for data...\n");
 		bluetooth_set_listening_mode();
 		delay(SECONDE);
+		terminal_putstr("Listening mode started\n");
+		
+		bluetooth_clear_slave_adress();
+		delay(SECONDE);
+		terminal_putstr("Slave adress cleared\n");
+		
+		terminal_putstr("Listening for data...\n");
 		bluetooth_listen();
 			
 		terminal_putstr(DIVIDER);

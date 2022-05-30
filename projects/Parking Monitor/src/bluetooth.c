@@ -113,6 +113,11 @@ void bluetooth_set_listening_mode()
 	bluetooth_putc('M');
 }
 
+void bluetooth_clear_slave_adress()
+{
+	bluetooth_putstr(AT_CLEAR);
+}
+
 void bluetooth_listen()
 {
 	char new_byte = ' ';
