@@ -26,8 +26,6 @@ import wiringpi
 
 DEVICE_PATH = '/dev/serial0'
 BAUDRATE = 9600
-
-BROADCAST_TIME_IN_SECONDS = 5
     
 STX = 0x02 #tart of Text
 ETX = 0x03 #End of Text
@@ -36,16 +34,16 @@ MODULE_NAME = 'Gateway-1'
 
 AT_NAME = 'AT+NAME=' + MODULE_NAME
 AT_CONT = 'AT+CONT='
-
 AT_ROLE_M = 'AT+ROLE=M'
 AT_CLEAR = 'AT+CLEAR'
-
 AT_ROLE_S = 'AT+ROLE=S'
 AT_AVDA_BASIS = 'AT+AVDA='
 
 STATUS_NAME = 'OKsetNAME:' + MODULE_NAME
 
+PROCESSING_TIME = 1
 TIME_OUT_IN_SECONDS = 2
+BROADCAST_TIME_IN_SECONDS = 5
 
 def __waitForOK__(serial):
         if serial > -1:
@@ -109,32 +107,6 @@ def __waitForX__(serial, x):
                 print('Couldn\'t establish connection with module =(')
         
         return False        
-        
-def __enableModule__(serial):
-        if serial > -1:
-                while True:
-                        print('Enabling module...')
-                        wiringpi.serialPrintf(serial, (AT_CONT + '1'))
-                        if __waitForOK__(serial):
-                                time.sleep(1)
-                                break
-        
-                print('Module ready')
-        else:
-                print('Couldn\'t establish connection with module =(')
-        
-def __disableModule__(serial):
-        if serial > -1:
-                while True:
-                        print('Disabling module...')
-                        wiringpi.serialPrintf(serial, (AT_CONT + '0'))
-                        if __waitForOK__(serial):
-                                time.sleep(1)
-                                break
-        
-                print('Module disabled')
-        else:
-                print('Couldn\'t establish connection with module =(')
 
 def init():
     wiringpi.wiringPiSetup()
@@ -143,14 +115,18 @@ def init():
     if serial > -1:
         print('Connection with module established')
         
-        #__disableModule__(serial)
-        __enableModule__(serial)
-        
+        print('Updating connect ability...')
         while True:
-                print('Updating module name...')
+                wiringpi.serialPrintf(serial, (AT_CONT + '1'))
+                if __waitForOK__(serial):
+                        time.sleep(PROCESSING_TIME)
+                        break
+        
+        print('Updating module name...')
+        while True:
                 wiringpi.serialPrintf(serial, AT_NAME)
                 if __waitForX__(serial, STATUS_NAME):
-                        time.sleep(1)
+                        time.sleep(PROCESSING_TIME)
                         break
         
     else:
@@ -161,27 +137,25 @@ def init():
 def broadcast(serial, data):
     if serial > -1:
         
+        print('Putting module in broadcast mode...')
         while True:
-                print('Putting module in broadcast mode...')
                 wiringpi.serialPrintf(serial, AT_ROLE_S)
                 if __waitForOK__(serial):
-                        time.sleep(1)
+                        time.sleep(PROCESSING_TIME)
                         break
                         
+        print('Start broadcast...')
         broadcast = chr(STX) + data + chr(ETX)
-        #__enableModule__(serial)
         while True:
-                print('Start broadcast...')
                 wiringpi.serialPrintf(serial, (AT_AVDA_BASIS + broadcast))
                 if __waitForOK__(serial):
-                        time.sleep(1)
+                        time.sleep(PROCESSING_TIME)
                         break
         
         print('Broadcasting: \'' + broadcast + '\'')
         time.sleep(BROADCAST_TIME_IN_SECONDS)
         
         print('End broadcast')
-        #__disableModule__(serial)
     else:
         print('Couldn\'t establish connection with module =(')
 
@@ -190,29 +164,25 @@ def listen(serial):
     
     if serial > -1:
         
+        print('Putting module in listen mode...')
         while True:
-                print('Putting module in listen mode...')
                 wiringpi.serialPrintf(serial, AT_ROLE_M)
                 if __waitForOK__(serial):
-                        time.sleep(1)
+                        time.sleep(PROCESSING_TIME)
                         break
-                        
+             
+        print('Disconnect previous slave...')           
         while True:
-                print('Disconnect previous slave...')
                 wiringpi.serialPrintf(serial, AT_CLEAR)
                 if __waitForOK__(serial):
-                        time.sleep(1)
+                        time.sleep(PROCESSING_TIME)
                         break
         
-        #__enableModule__(serial)
         print('Start listen...')
-        b = ''
         hasTransmissionArrived = False
-        
         while True:
             if wiringpi.serialDataAvail(serial):
                 b = wiringpi.serialGetchar(serial)
-                #print('In: ' + chr(b))
                 
                 if b == STX:
                         hasTransmissionArrived = True
@@ -225,7 +195,6 @@ def listen(serial):
                         
         print('Data received: ' + receivedData)
         print('End listen')
-        #__disableModule__(serial)
     else:
         print('Couldn\'t establish connection with module =(')
         

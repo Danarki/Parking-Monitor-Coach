@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
 #  gateway.py
 #  
 #  Copyright 2022  <pi@raspberrypi>
@@ -35,9 +38,10 @@ def main(args):
     #for newReservation in newReservations:
         #module.broadcast(serial, newReservation)
     
-    while True:
-        server.send(module.listen(serial))
-        time.sleep(1)
+    #while True:
+        #server.send(module.listen(serial))
+        #time.sleep(1)
+    server.receive()
         
     return 0
 

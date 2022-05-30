@@ -46,29 +46,26 @@ def send(dataPackage):
         richting = int(dataPackage[8:-1])
         waarde = chr(int(dataPackage[9:]) + 1 + ord('0'))
         
-        
         #send the payload to the server
         if richting > 0:
             print('Kan geen reservaties sturen naar de server!')
         else:
             print('Sensor status versturen naar server...')
-            r = requests.post(
-            LINK_STATUS + 'parking_space_id=' + vakID + '&status=' + waarde)
+            r = requests.post(LINK_STATUS + 'parking_space_id=' + vakID + '&status=' + waarde)
             print(r.url)
-        
-            status()
+    
+            r = requests.get(LINK_STATUS)
+            print(r.text)
+            
             print('Sensor status verstuurd')
     else:
         print 'Invalid data package!'
-    
-def status():
-    r = requests.get(LINK_STATUS)
-    print(r.text)
     
 def receive():
     #ask the server for current reservations
     r = requests.get(LINK_RESERVATIONS)
     reservations = r.json()
+    #print(reservations)
 
     dataPackages = [] #data that is going to be broadcasted
     
