@@ -24,20 +24,48 @@
 import module
 import server
 
+MAX_CONNECTION_ATTEMPTS = 3
+
 DIVIDER = '- - - - - - - - - -'
 
 def main(args):
     serial = module.init()
     
-    #newReservations = server.receive()
-    #for newReservation in newReservations:
-        #print(DIVIDER)
-        #module.broadcast(serial, newReservation)
-    
-    #while True:
-        #print(DIVIDER)
-        #server.send(module.listen(serial))
+    while True:
+        print(DIVIDER)
+        newReservations = server.receive()
         
+        for newReservation in newReservations:
+            
+            sendBroadcastID = newReservation[4:-3]
+            unreachableParkingSpaceCounter = 0 #the amount of attempts to reach a certain parking space
+            
+            while True:
+                print(DIVIDER)
+                
+                #after too many failed attempts, the parking space is seen as unreachable
+                if unreachableParkingSpaceCounter >= MAX_CONNECTION_ATTEMPTS: 
+                    print('Parking space ' + sendBroadcastID + ' unreachable')
+                    unreachableParkingSpaceCounter = 0
+                    break
+        
+                print('(Attempt ' + str(unreachableParkingSpaceCounter + 1) + ') Trying to reach parking space ' + sendBroadcastID + '...')
+                module.broadcast(serial, newReservation)
+                
+                receivedBroadcast = module.listen(serial)
+                if receivedBroadcast == -1: #time-out listen
+                    unreachableParkingSpaceCounter += 1
+                else:
+                    receivedBroadcastID = receivedBroadcast[4:-3]
+            
+                    if sendBroadcastID == receivedBroadcastID:
+                        print('Parking space ' + sendBroadcastID + ' reached')
+                        server.send(receivedBroadcast)
+                        break;
+                    else:
+                        print('Received broadcast doesn\'t belong to parking space ' + sendBroadcastID)
+                        unreachableParkingSpaceCounter += 1
+                    
     return 0
 
 if __name__ == '__main__':

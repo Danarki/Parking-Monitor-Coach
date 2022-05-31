@@ -42,71 +42,8 @@ AT_AVDA_BASIS = 'AT+AVDA='
 STATUS_NAME = 'OKsetNAME:' + MODULE_NAME
 
 PROCESSING_TIME = 1
-TIME_OUT_IN_SECONDS = 2
+TIME_OUT_IN_SECONDS = 5
 BROADCAST_TIME_IN_SECONDS = 5
-
-def __waitForOK__(serial):
-        if serial > -1:
-                validResponse = False
-                responseData = ''
-                
-                while True:
-                        if wiringpi.serialDataAvail(serial):
-                                c = chr(wiringpi.serialGetchar(serial))
-                                
-                                if c == 'O':
-                                        responseData += c
-                                elif c == 'K':
-                                        #Response has ended
-                                        validResponse = True
-                                        responseData += c
-                                        break
-                                elif c == chr(STX) or c == chr(ETX):
-                                        #missed the OK status
-                                        responseData = 'UNKNOWN'
-                                        break
-                                        
-                print('Wait for Status: ' + responseData)
-                
-                if validResponse:
-                        return True
-                else:
-                        time.sleep(TIME_OUT_IN_SECONDS)
-        else:
-                print('Couldn\'t establish connection with module =(')
-        
-        return False
-        
-def __waitForX__(serial, x):
-        if serial > -1:
-                validResponse = False
-                responseData = ''
-                
-                while True:
-                        if wiringpi.serialDataAvail(serial):
-                                c = chr(wiringpi.serialGetchar(serial))
-                                responseData += c
-                                 
-                                if responseData == x:
-                                        #x response received
-                                        validResponse = True
-                                        break;
-                                elif c == chr(STX) or c == chr(ETX):
-                                        #missed the OK status
-                                        responseData = 'UNKNOWN'
-                                        break
-                                
-                                
-                print('Wait for \'' + x + '\' Status: ' + responseData)
-                
-                if validResponse:
-                        return True
-                else:
-                        time.sleep(TIME_OUT_IN_SECONDS)
-        else:
-                print('Couldn\'t establish connection with module =(')
-        
-        return False        
 
 def init():
     wiringpi.wiringPiSetup()
@@ -162,22 +99,26 @@ def listen(serial):
         
         print('Start listen...')
         hasTransmissionArrived = False
+        startTime = time.time()
+        
         while True:
-            if wiringpi.serialDataAvail(serial):
-                b = wiringpi.serialGetchar(serial)
+                if wiringpi.serialDataAvail(serial):
+                        b = wiringpi.serialGetchar(serial)
                 
-                if b == STX:
-                        hasTransmissionArrived = True
-                        print('Transmission has arrived')
-                elif b == ETX:
-                        #Transmission has ended
+                        if b == STX:
+                                hasTransmissionArrived = True
+                                print('Transmission has arrived')
+                        elif b == ETX:
+                                #Transmission has ended
+                                print('Data received: ' + receivedData)
+                                print('End listen')
+                                return receivedData
+                        elif hasTransmissionArrived:
+                                receivedData += chr(b)
+                elif time.time() > startTime + TIME_OUT_IN_SECONDS:
+                        print('Time-out listen')
                         break
-                elif hasTransmissionArrived:
-                        receivedData += chr(b)
-                        
-        print('Data received: ' + receivedData)
-        print('End listen')
     else:
         print('Couldn\'t establish connection with module =(')
         
-    return receivedData
+    return -1

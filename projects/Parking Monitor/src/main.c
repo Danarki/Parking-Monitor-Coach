@@ -13,9 +13,9 @@
 #define SECONDE SystemCoreClock/8
 #define FIVE_SECONDS SECONDE * 5
 
-#define VAKNAAM "P1-001"
+#define VAKNAAM "P1-003"
 #define GATEWAY_ID 0x01 //Max 0x09
-#define VAK_ID 0x01//Max 0x3E7
+#define VAK_ID 0x03//Max 0x3E7
 
 // ----------------------------------------------------------------------------
 // Global variables
@@ -92,20 +92,11 @@ int main(){
 			{
 				updateLEDS(is_parking_spot_reserved + 1);
 			}
-			
-			//Broadcast data
-			terminal_putstr("Broadcasting own parking space occupation...\n");
-			bluetooth_set_broadcast_mode();
-			delay(SECONDE);
-			bluetooth_broadcast_occupation();
-			
-			//The broadcast lasts five seconds
-			delay(FIVE_SECONDS);
 		}
 		else
 		{
 			//Check if the received broadcast contains reservation data for this parking spot
-			if(bluetooth_get_gatewayID() == GATEWAY_ID && bluetooth_get_vakID() == VAK_ID)
+			if(bluetooth_get_gatewayID() == GATEWAY_ID && bluetooth_get_vakID() == VAK_ID && bluetooth_get_direction() == DIRECTION_PARKING_SPOT)
 			{		
 				//If it does, update the LEDs
 				terminal_putstr("Reservation update received\n");
@@ -122,27 +113,20 @@ int main(){
 					terminal_putstr("Updating LEDs...\n");
 					updateLEDS(is_parking_spot_reserved + 1);
 				}
+				
+				//And also broadcast occupation data
+				terminal_putstr("Broadcasting own parking space occupation...\n");
+				bluetooth_set_broadcast_mode();
+				delay(SECONDE);
+				bluetooth_broadcast_occupation();
+			
+				//The broadcast lasts five seconds
+				delay(FIVE_SECONDS);
 			}
-			//Otherwise send a received broadcast further into the mesh netwerk;
+			//Otherwise ignore the received broadcast
 			else
 			{
-				//Check if the time to live has maxed out
-				if(bluetooth_get_time_to_live() == MAX_TIME_TO_LIVE)
-				{
-					terminal_putstr("Received data package has lived too long\n");
-					terminal_putstr("Dropping data package...\n");
-				}
-				else
-				{
-					//Broadcast data
-					terminal_putstr("Broadcasting received data...\n");
-					bluetooth_set_broadcast_mode();
-					delay(SECONDE);
-					bluetooth_broadcast_received_bytes();
-						
-					//The broadcast last five seconds
-					delay(FIVE_SECONDS);
-				}
+				terminal_putstr("Data package ignored: wrong destination\n");
 			}	
 		}
 			
