@@ -116,18 +116,12 @@ def init():
         print('Connection with module established')
         
         print('Updating connect ability...')
-        while True:
-                wiringpi.serialPrintf(serial, (AT_CONT + '1'))
-                if __waitForOK__(serial):
-                        time.sleep(PROCESSING_TIME)
-                        break
+        wiringpi.serialPrintf(serial, (AT_CONT + '1'))
+        time.sleep(PROCESSING_TIME)
         
         print('Updating module name...')
-        while True:
-                wiringpi.serialPrintf(serial, AT_NAME)
-                if __waitForX__(serial, STATUS_NAME):
-                        time.sleep(PROCESSING_TIME)
-                        break
+        wiringpi.serialPrintf(serial, AT_NAME)
+        time.sleep(PROCESSING_TIME)
         
     else:
         print('Couldn\'t establish connection with module =(')
@@ -138,19 +132,13 @@ def broadcast(serial, data):
     if serial > -1:
         
         print('Putting module in broadcast mode...')
-        while True:
-                wiringpi.serialPrintf(serial, AT_ROLE_S)
-                if __waitForOK__(serial):
-                        time.sleep(PROCESSING_TIME)
-                        break
-                        
+        wiringpi.serialPrintf(serial, AT_ROLE_S)
+        time.sleep(PROCESSING_TIME)
+                
         print('Start broadcast...')
         broadcast = chr(STX) + data + chr(ETX)
-        while True:
-                wiringpi.serialPrintf(serial, (AT_AVDA_BASIS + broadcast))
-                if __waitForOK__(serial):
-                        time.sleep(PROCESSING_TIME)
-                        break
+        wiringpi.serialPrintf(serial, (AT_AVDA_BASIS + broadcast))
+        time.sleep(PROCESSING_TIME)
         
         print('Broadcasting: \'' + broadcast + '\'')
         time.sleep(BROADCAST_TIME_IN_SECONDS)
@@ -165,18 +153,12 @@ def listen(serial):
     if serial > -1:
         
         print('Putting module in listen mode...')
-        while True:
-                wiringpi.serialPrintf(serial, AT_ROLE_M)
-                if __waitForOK__(serial):
-                        time.sleep(PROCESSING_TIME)
-                        break
+        wiringpi.serialPrintf(serial, AT_ROLE_M)
+        time.sleep(PROCESSING_TIME)
              
-        print('Disconnect previous slave...')           
-        while True:
-                wiringpi.serialPrintf(serial, AT_CLEAR)
-                if __waitForOK__(serial):
-                        time.sleep(PROCESSING_TIME)
-                        break
+        print('Disconnect previous slave...')    
+        wiringpi.serialPrintf(serial, AT_CLEAR)
+        time.sleep(PROCESSING_TIME)
         
         print('Start listen...')
         hasTransmissionArrived = False

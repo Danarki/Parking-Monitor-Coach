@@ -21,7 +21,6 @@
 #  MA 02110-1301, USA.
 #  
 # 
-import time
 import requests
 
 DATA_PACKAGE_START = 'T0V1'
@@ -65,27 +64,27 @@ def receive():
     #ask the server for current reservations
     r = requests.get(LINK_RESERVATIONS)
     reservations = r.json()
-    #print(reservations)
+    
+    reservedParkingSpaceIDs= [] #stores the ID of the parking spaces that have been reserved
+    #collects the IDs of reserved parking spaces from the reservations
+    for reservation in reservations:
+        parkingSpaceIDStr = reservation['parking_space_id']
+        if parkingSpaceIDStr not in reservedParkingSpaceIDs:
+            reservedParkingSpaceIDs.append(parkingSpaceIDStr)
 
     dataPackages = [] #data that is going to be broadcasted
-    
-    #loop through all the parking spaces to compare there reservation status
+    #loop through all the parking spaces to update there reservation status
     for parkingSpaceID in range(MAX_PARKING_SPACES):
-        #build and add a data package
-        parkingSpaceIDChar = chr(parkingSpaceID + 1 + ord('0'))
-        #print(parkingSpaceIDChar)
-        if parkingSpaceIDChar in reservations:
+        #build and add a data package containing the reservation status of the parking space
+        parkingSpaceIDStr = DATA_PARKING_SPACE_ONE_DIGIT + chr(parkingSpaceID + 1 + ord('0'))
+        if parkingSpaceIDStr in reservedParkingSpaceIDs:
             dataPackages.append(
-            DATA_PACKAGE_START + DATA_PARKING_SPACE_ONE_DIGIT + parkingSpaceIDChar + DATA_PACKAGE_MIDDLE + '1'
-            )
+            DATA_PACKAGE_START + parkingSpaceIDStr + DATA_PACKAGE_MIDDLE + '1')
         else:
             dataPackages.append(
-            DATA_PACKAGE_START + DATA_PARKING_SPACE_ONE_DIGIT + parkingSpaceIDChar + DATA_PACKAGE_MIDDLE + '0'
-            )
+            DATA_PACKAGE_START + parkingSpaceIDStr + DATA_PACKAGE_MIDDLE + '0')
     
-    #send back the data packages ready for broadcasting
-    print('Data packages ready for broadcast:')
+    #return data packages containing the reservation status for all parking spaces 
+    print('Data packages ready for broadcasting:')
     print(dataPackages)
     return dataPackages
-    
-    

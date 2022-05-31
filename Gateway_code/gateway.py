@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
 #  gateway.py
 #  
 #  Copyright 2022  <pi@raspberrypi>
@@ -24,24 +21,22 @@
 #  MA 02110-1301, USA.
 #  
 # 
-from __future__ import print_function
-import time
-import wiringpi
-
 import module
 import server
+
+DIVIDER = '- - - - - - - - - -'
 
 def main(args):
     serial = module.init()
     
     #newReservations = server.receive()
     #for newReservation in newReservations:
+        #print(DIVIDER)
         #module.broadcast(serial, newReservation)
     
     #while True:
+        #print(DIVIDER)
         #server.send(module.listen(serial))
-        #time.sleep(1)
-    server.receive()
         
     return 0
 
