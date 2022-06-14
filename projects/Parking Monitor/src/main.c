@@ -11,7 +11,7 @@
 #define DIVIDER "- - - - - - - - - -\n"
 
 #define SECONDE SystemCoreClock/8
-#define FIVE_SECONDS SECONDE * 5
+#define TEN_SECONDS SECONDE * 10
 
 #define VAKNAAM "P1-003"
 #define GATEWAY_ID 0x01 //Max 0x09
@@ -55,7 +55,9 @@ int main(){
 	//Update a few settings of the bluetooth module
 	bluetooth_set_name(VAKNAAM, GATEWAY_ID, VAK_ID);
 	delay(SECONDE);
-	terminal_putstr("Module name updated\n");
+	terminal_putstr("Module name updated: \'");
+	terminal_putstr(VAKNAAM);
+	terminal_putstr("\'\n");
 	
 	bluetooth_set_connect_ability();
 	delay(SECONDE);
@@ -120,8 +122,8 @@ int main(){
 				delay(SECONDE);
 				bluetooth_broadcast_occupation();
 			
-				//The broadcast lasts five seconds
-				delay(FIVE_SECONDS);
+				//The broadcast lasts ten seconds
+				delay(TEN_SECONDS);
 			}
 			//Otherwise ignore the received broadcast
 			else
