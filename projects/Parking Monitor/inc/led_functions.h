@@ -1,25 +1,15 @@
 /******************************************************************************
  * File           : USART driver header file
 ******************************************************************************/
-#ifndef _USART_H_
-#define _USART_H_
+#ifndef _LED_FUNCTION_H_
+#define _LED_FUNCTION_H_
 
-#include "stm32f0xx.h"
 #include "stdint.h"
-#include "stdbool.h"
 
 /******************************************************************************
   Function prototypes
 ******************************************************************************/
-void terminal_init(void);
+void init_LED_GPIO(void);
+void updateLEDS(uint8_t code);
 
-void terminal_putc(char c);
-void terminal_putstr(char *str);
-
-bool terminal_available(void);
-char terminal_getc(void);
-void terminal_getstr(char *str);
-
-void terminal_clearscreen(void);
-
-#endif // _USART_H_
+#endif // _LED_FUNCTION_H_
